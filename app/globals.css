@@ -1,26 +1,316 @@
-@import "tailwindcss";
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --naranja: #FF6B1A;
+  --naranja-suave: rgba(255, 107, 26, 0.1);
+  --naranja-borde: rgba(255, 107, 26, 0.3);
+  --fondo: #0A0A0A;
+  --fondo-card: #111111;
+  --fondo-input: #141414;
+  --borde: #1E1E1E;
+  --borde-hover: #2A2A2A;
+  --texto: #EFEFEF;
+  --texto-secundario: #666666;
+  --texto-apagado: #333333;
+  --radio: 10px;
+  --radio-lg: 14px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html, body {
+  background: var(--fondo);
+  color: var(--texto);
+  font-family: var(--font-primary), -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Scrollbar personalizado */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--fondo); }
+::-webkit-scrollbar-thumb { background: #222; border-radius: 4px; }
+
+/* Inputs globales */
+input, select, textarea {
+  font-family: inherit;
+  color: var(--texto);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--texto-apagado);
+}
+
+/* Selects en dark mode */
+select option {
+  background: #1A1A1A;
+  color: var(--texto);
+}
+
+/* Layout contenedor principal */
+.app-container {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem;
+  min-height: 100vh;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .app-container {
+    padding: 1rem 1rem;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@media (min-width: 768px) {
+  .app-container {
+    padding: 2rem 1.5rem;
+  }
+}
+
+/* Header */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--borde);
+  margin-bottom: 2rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.brand-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--texto);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.brand-name span {
+  color: var(--naranja);
+}
+
+.brand-slogan {
+  font-size: 10px;
+  color: var(--texto-apagado);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.by-tag {
+  font-size: 11px;
+  color: var(--texto-apagado);
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.by-tag:hover {
+  color: var(--naranja);
+}
+
+/* Section label */
+.section-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--naranja);
+  margin: 1.75rem 0 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-label::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--borde), transparent);
+}
+
+/* Divider */
+.divider {
+  height: 1px;
+  background: var(--borde);
+  margin: 1.5rem 0;
+}
+
+/* Inputs */
+.input-field {
+  background: var(--fondo-input);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  padding: 11px 14px;
+  color: var(--texto);
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.input-field:focus {
+  border-color: var(--naranja);
+  box-shadow: 0 0 0 3px var(--naranja-suave);
+}
+
+/* Cards */
+.card {
+  background: var(--fondo-card);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-lg);
+  padding: 1.1rem 1.25rem;
+}
+
+/* Botón primario */
+.btn-primary {
+  background: var(--naranja);
+  border: none;
+  border-radius: var(--radio);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.btn-primary:hover {
+  background: #e55f15;
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+/* Botón secundario */
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  color: var(--texto-secundario);
+  font-size: 14px;
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  border-color: var(--borde-hover);
+  color: var(--texto);
+}
+
+/* Chips */
+.chip {
+  padding: 7px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--borde);
+  background: transparent;
+  color: var(--texto-secundario);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.chip:hover {
+  border-color: var(--borde-hover);
+  color: #aaa;
+}
+
+.chip.activo {
+  border-color: var(--naranja);
+  background: var(--naranja-suave);
+  color: var(--naranja);
+}
+
+/* Badges de nivel */
+.badge-nivel {
+  display: inline-block;
+  font-size: 11px;
+  padding: 3px 12px;
+  border-radius: 6px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  margin-top: 8px;
+}
+
+.badge-principiante {
+  background: rgba(24, 95, 165, 0.12);
+  color: #4A8FCC;
+  border: 1px solid rgba(24, 95, 165, 0.2);
+}
+
+.badge-intermedio {
+  background: rgba(186, 117, 23, 0.12);
+  color: #D4973A;
+  border: 1px solid rgba(186, 117, 23, 0.2);
+}
+
+.badge-avanzado {
+  background: rgba(59, 109, 17, 0.12);
+  color: #6BB040;
+  border: 1px solid rgba(59, 109, 17, 0.2);
+}
+
+/* Footer */
+.app-footer {
+  margin-top: 3rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--borde);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer-slogan {
+  font-size: 11px;
+  color: var(--texto-apagado);
+  font-style: italic;
+}
+
+.footer-slogan span {
+  color: var(--naranja);
+}
+
+.footer-by {
+  font-size: 11px;
+  color: var(--texto-apagado);
+}
+
+/* Animacion entrada */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.fade-up {
+  animation: fadeUp 0.35s ease both;
+}
+
+/* Badge de referencia en test cards */
+.badge-referencia {
+  font-size: 10px;
+  padding: 3px 10px;
+  border-radius: 6px;
+  background: #1E1E1E;
+  color: #888;
+  border: 1px solid #2A2A2A;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }

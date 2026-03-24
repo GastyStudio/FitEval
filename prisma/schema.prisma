@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── TRAINER (el que usa la app) ────────────────────────
+model Trainer {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String
+  createdAt DateTime @default(now())
+
+  clients   Client[]
+}
+
+// ─── CLIENTE (el evaluado) ───────────────────────────────
+model Client {
+  id          String   @id @default(cuid())
+  firstName   String
+  lastName    String
+  age         Int
+  sex         String
+  weight      Float
+  height      Float
+  objetivo    String
+  experiencia String
+  lesiones    String?
+  createdAt   DateTime @default(now())
+
+  trainerId   String
+  trainer     Trainer     @relation(fields: [trainerId], references: [id])
+
+  evaluation  Evaluation? @relation("ClientEvaluation")
+}
+
+// ─── EVALUACIÓN ──────────────────────────────────────────
+model Evaluation {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  // Tests peso corporal
+  flexiones  Int
+  sentadilla Int
+  dominadas  Int
+  plancha    Int
+
+  // Tests gimnasio (opcionales)
+  esGimnasio    Boolean @default(false)
+  banca         Int?
+  sentadillaGym Int?
+  pesoMuerto    Int?
+  remo          Int?
+
+  // Niveles tests peso corporal
+  nivelFlex    String
+  nivelSent    String
+  nivelDom     String
+  nivelPlancha String
+
+  // Niveles tests gimnasio (opcionales)
+  nivelBanca      String?
+  nivelSentGym    String?
+  nivelPesoMuerto String?
+  nivelRemo       String?
+
+  // Resultado general
+  nivelGeneral String
+  imc          Float
+  frecuencia   Int
+
+  clientId String @unique
+  client   Client @relation("ClientEvaluation", fields: [clientId], references: [id])
+}
