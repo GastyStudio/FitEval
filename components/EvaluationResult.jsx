@@ -2,6 +2,8 @@
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Header from "./Header";
+import { generarAlertas } from "@/lib/alertas";
+import { generarPDF } from "@/lib/generarPDF";
 
 const DAYS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
 
@@ -33,6 +35,7 @@ export default function EvaluationResult() {
   const [cliente, setCliente]   = useState(null);
   const [loading, setLoading]   = useState(true);
   const [freq, setFreq]         = useState(3);
+  const [generando, setGenerando] = useState(false);
 
   useEffect(() => {
     if (!params?.id) return;
@@ -64,6 +67,7 @@ export default function EvaluationResult() {
   const estilos     = NIVEL_ESTILOS[nivel];
   const cfg         = FREQ_CONFIG[freq];
   const esGimnasio  = ev?.esGimnasio;
+  const alertas = generarAlertas(cliente.lesiones);
 
   // Tests según tipo de entrenamiento
   const tests = esGimnasio ? [
@@ -84,8 +88,14 @@ export default function EvaluationResult() {
     { label: "Experiencia", val: cliente.experiencia === "Sin experiencia" ? "0" : cliente.experiencia === "Menos de 1 año" ? "-1 año" : "+1 año", sub: "en entrenamiento" },
   ];
 
+ async function descargarPDF() {
+  setGenerando(true);
+  await generarPDF(cliente, ev, alertas);
+  setGenerando(false);
+}
+
   return (
-    <div className="app-container">
+    <div className="app-container" id="informe-cliente" style={{ padding: "2rem", maxWidth: 600, margin: "0 auto" }}>
       <Header />
 
       {/* Header cliente */}
@@ -146,6 +156,52 @@ export default function EvaluationResult() {
       </div>
 
       <div className="divider" />
+      {/* Alertas de lesiones */}
+{alertas.length > 0 && (
+  <>
+    <p className="section-label">Alertas de lesiones</p>
+    {alertas.map((alerta, i) => (
+      <div
+        key={i}
+        style={{
+          background: "rgba(220, 60, 60, 0.06)",
+          border: "1px solid rgba(220, 60, 60, 0.2)",
+          borderRadius: 12,
+          padding: "1rem 1.25rem",
+          marginBottom: 10,
+        }}
+      >
+        {/* Zona afectada */}
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+          <span style={{ fontSize: 16 }}>{alerta.icono}</span>
+          <p style={{ fontSize: 13, fontWeight: 600, color: "#E05555", margin: 0 }}>
+            {alerta.zona}
+          </p>
+        </div>
+
+        {/* Ejercicios afectados */}
+        {alerta.ejercicios.map((ej, j) => (
+          <div
+            key={j}
+            style={{
+              borderTop: j > 0 ? "1px solid rgba(220,60,60,0.1)" : "none",
+              paddingTop: j > 0 ? 10 : 0,
+              marginTop: j > 0 ? 10 : 0,
+            }}
+          >
+            <p style={{ fontSize: 12, fontWeight: 600, color: "#E05555", margin: "0 0 4px", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+              {ej.ejercicio}
+            </p>
+            <p style={{ fontSize: 13, color: "var(--texto-secundario)", margin: 0, lineHeight: 1.6 }}>
+              {ej.alerta}
+            </p>
+          </div>
+        ))}
+      </div>
+    ))}
+    <div className="divider" />
+  </>
+)}
 
       {/* Tests */}
       <p className="section-label">Tests de fuerza</p>
@@ -239,12 +295,14 @@ export default function EvaluationResult() {
         <button onClick={() => router.push("/clients")} className="btn-secondary">
           Volver
         </button>
-        <button
-          onClick={() => alert("Generación de PDF — próximo paso")}
-          className="btn-primary"
-        >
-          Descargar PDF →
-        </button>
+       <button
+        onClick={descargarPDF}
+        className="btn-primary"
+        style={{ opacity: generando ? 0.7 : 1 }}
+        disabled={generando}
+      >
+      {generando ? "Generando PDF..." : "Descargar PDF →"}
+      </button>
       </div>
 
       <footer className="app-footer">
